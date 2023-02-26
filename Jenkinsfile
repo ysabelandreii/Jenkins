@@ -1,20 +1,31 @@
 pipeline {
     agent any
+
     stages {
-        stage('Build') {
+        stage('Clone repository') {
             steps {
-                sh 'echo "Building the application..."'
+                // Clone the Git repository containing the sample webpage
+                git 'https://github.com/example/sample-webpage.git'
             }
         }
-        stage('Test') {
+
+        stage('Deploy to AWS') {
             steps {
-                sh 'echo "Running unit tests..."'
+                // Use AWS CLI to copy the files to an S3 bucket
+                withAWS(region: 'us-west-2', credentials: 'aws-credentials') {
+                    sh 'aws s3 cp --recursive ./ s3://my-bucket-name/'
+                }
             }
         }
-        stage('Deploy') {
-            steps {
-                sh 'echo "Deploying the application..."'
-            }
+    }
+
+    post {
+        // Notify a Slack channel about the status of the deployment
+        success {
+            slackSend(channel: '#deployments', message: 'Deployment successful!')
+        }
+        failure {
+            slackSend(channel: '#deployments', message: 'Deployment failed!')
         }
     }
 }
