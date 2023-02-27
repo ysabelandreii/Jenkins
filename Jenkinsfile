@@ -7,7 +7,7 @@ pipeline {
                 cleanWs()
                 echo '[INFO] Cloning Repository' 
                 sh 'git clone --depth 1 --single-branch https://github.com/ysabelandreii/Sample-Website.git -b sample-website'
-                
+                ls 'Sample-Website'
             }
         }
 
