@@ -22,7 +22,6 @@ pipeline {
             steps {
                 echo '[INFO] Sending Notifications'
             }
-            }
         }
     }
 }
