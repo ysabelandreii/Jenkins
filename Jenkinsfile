@@ -2,30 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone repository') {
+        stage('Copy website') {
             steps {
-                // Clone the Git repository containing the sample webpage
-                git 'https://github.com/example/sample-webpage.git'
+                cleanWs()
+                echo '[INFO] Cloning Repository' 
+                sh 'git clone --depth 1 --single-branch https://github.com/ysabelandreii/Sample-Website.git -b sample-website'
+                
             }
         }
 
-        stage('Deploy to AWS') {
+        stage('Deploy to EC2 instance') {
             steps {
-                // Use AWS CLI to copy the files to an S3 bucket
-                withAWS(region: 'us-west-2', credentials: 'aws-credentials') {
-                    sh 'aws s3 cp --recursive ./ s3://my-bucket-name/'
-                }
+                echo '[INFO] Deploying to AWS'
+                // sh 'scp -r web_app user@ip_add:/var/www/html'
             }
         }
-    }
 
-    post {
-        // Notify a Slack channel about the status of the deployment
-        success {
-            slackSend(channel: '#deployments', message: 'Deployment successful!')
-        }
-        failure {
-            slackSend(channel: '#deployments', message: 'Deployment failed!')
+        stage('Send Slack notification') {
+            steps {
+                echo '[INFO] Sending Notifications'
+            }
+            }
         }
     }
 }
